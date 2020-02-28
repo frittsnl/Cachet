@@ -66,6 +66,7 @@ class CreateScheduleCommandHandler
     {
         try {
             $schedule = Schedule::create($this->filter($command));
+            $schedule->attachComponents($command->components);
             event(new ScheduleWasCreatedEvent($this->auth->user(), $schedule, (bool) $command->notify));
         } catch (InvalidArgumentException $e) {
             throw new ValidationException(new MessageBag([$e->getMessage()]));

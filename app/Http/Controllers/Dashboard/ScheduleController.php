@@ -16,6 +16,8 @@ use CachetHQ\Cachet\Bus\Commands\Schedule\CreateScheduleCommand;
 use CachetHQ\Cachet\Bus\Commands\Schedule\DeleteScheduleCommand;
 use CachetHQ\Cachet\Bus\Commands\Schedule\UpdateScheduleCommand;
 use CachetHQ\Cachet\Integrations\Contracts\System;
+use CachetHQ\Cachet\Models\Component;
+use CachetHQ\Cachet\Models\ComponentGroup;
 use CachetHQ\Cachet\Models\IncidentTemplate;
 use CachetHQ\Cachet\Models\Schedule;
 use GrahamCampbell\Binput\Facades\Binput;
@@ -79,6 +81,7 @@ class ScheduleController extends Controller
 
         return View::make('dashboard.maintenance.add')
             ->withPageTitle(trans('dashboard.schedule.add.title').' - '.trans('dashboard.dashboard'))
+            ->withComponents(Component::all())
             ->withIncidentTemplates($incidentTemplates)
             ->withNotificationsEnabled($this->system->canNotifySubscribers());
     }
@@ -121,9 +124,9 @@ class ScheduleController extends Controller
     public function showEditSchedule(Schedule $schedule)
     {
         $incidentTemplates = IncidentTemplate::all();
-
         return View::make('dashboard.maintenance.edit')
             ->withPageTitle(trans('dashboard.schedule.edit.title').' - '.trans('dashboard.dashboard'))
+            ->withComponents(Component::all())
             ->withIncidentTemplates($incidentTemplates)
             ->withSchedule($schedule);
     }

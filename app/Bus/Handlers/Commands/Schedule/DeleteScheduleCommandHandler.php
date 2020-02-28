@@ -53,7 +53,6 @@ class DeleteScheduleCommandHandler
         $schedule = $command->schedule;
 
         event(new ScheduleWasRemovedEvent($this->auth->user(), $schedule));
-
         $schedule->delete();
     }
 }

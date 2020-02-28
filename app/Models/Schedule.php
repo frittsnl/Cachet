@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use McCool\LaravelAutoPresenter\HasPresenter;
 
 class Schedule extends Model implements HasPresenter
@@ -57,7 +58,7 @@ class Schedule extends Model implements HasPresenter
      * @var string[]
      */
     protected $attributes = [
-        'status'       => self::UPCOMING,
+        'status' => self::UPCOMING,
         'completed_at' => null,
     ];
 
@@ -67,9 +68,9 @@ class Schedule extends Model implements HasPresenter
      * @var string[]
      */
     protected $casts = [
-        'name'         => 'string',
-        'message'      => 'string',
-        'status'       => 'int',
+        'name' => 'string',
+        'message' => 'string',
+        'status' => 'int',
         'scheduled_at' => 'datetime',
         'completed_at' => 'datetime',
     ];
@@ -95,9 +96,9 @@ class Schedule extends Model implements HasPresenter
      * @var string[]
      */
     public $rules = [
-        'name'         => 'required|string',
-        'message'      => 'nullable|string',
-        'status'       => 'required|int|between:0,2',
+        'name' => 'required|string',
+        'message' => 'nullable|string',
+        'status' => 'required|int|between:0,2',
     ];
 
     /**
@@ -141,6 +142,26 @@ class Schedule extends Model implements HasPresenter
     public function components()
     {
         return $this->hasMany(ScheduleComponent::class);
+    }
+
+    /**
+     * Added function to connect components trough the DB directly. Terrible solution. Works for me.
+     */
+    public function attachComponents(array $components)
+    {
+        $this->detachAllComponents();
+        foreach ($components as $componentId => $component){
+            if(isset($component['affected']) && $component['affected']){
+                $data = [
+                    'schedule_id' => $this->id,
+                    'component_id' => (int) $componentId,
+                    'component_status' => (int) $component['status'],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ];
+                DB::table('schedule_components')->insert($data);
+            }
+        }
     }
 
     /**
@@ -215,5 +236,17 @@ class Schedule extends Model implements HasPresenter
     public function getPresenterClass()
     {
         return SchedulePresenter::class;
+    }
+
+    private function detachAllComponents(): void
+    {
+        DB::table('schedule_components')->where('schedule_id', $this->id)->delete();
+    }
+
+    public function delete()
+    {
+        $this->detachAllComponents();
+        // Do some stuff before delete
+        return parent::delete();
     }
 }

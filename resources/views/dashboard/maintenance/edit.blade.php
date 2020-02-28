@@ -56,6 +56,7 @@
                         <label>{{ trans('forms.schedules.completed_at') }}</label>
                         <input type="text" name="completed_at" class="form-control flatpickr-time" data-date-format="Y-m-d H:i" value="{{ $schedule->completed_at_datetimepicker }}" placeholder="{{ trans('forms.schedules.completed_at') }}">
                     </div>
+                    @include('dashboard.maintenance._componentsSelection')
                 </fieldset>
 
                 <div class="form-group">

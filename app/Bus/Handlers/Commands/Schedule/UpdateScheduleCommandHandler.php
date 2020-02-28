@@ -16,6 +16,7 @@ use CachetHQ\Cachet\Bus\Events\Schedule\ScheduleWasUpdatedEvent;
 use CachetHQ\Cachet\Models\Schedule;
 use CachetHQ\Cachet\Services\Dates\DateFactory;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\DB;
 
 /**
  * This is the update schedule command handler.
@@ -64,6 +65,8 @@ class UpdateScheduleCommandHandler
         $schedule = $command->schedule;
 
         $schedule->update($this->filter($command));
+
+        $schedule->attachComponents($command->components);
 
         event(new ScheduleWasUpdatedEvent($this->auth->user(), $schedule));
 
