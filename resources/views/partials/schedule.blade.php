@@ -12,10 +12,10 @@
                     {!! $schedule->formatted_message !!}
                 </div>
                 @if($schedule->components->count() > 0)
-                <hr>
-                @foreach($schedule->components as $affectedComponent)
-                <span class="label label-primary">{{ $affectedComponent->component->name }}</span>
-                @endforeach
+{{--                <hr>--}}
+{{--                @foreach($schedule->components as $affectedComponent)--}}
+{{--                <span class="label label-primary">{{ $affectedComponent->component->name }}</span>--}}
+{{--                @endforeach--}}
                 @endif
             </div>
             @endforeach
